@@ -1,3 +1,29 @@
+const texts = ["Graphic Designer", "Frontend Developer", "Web Designer", "Brand Strategist"];
+const textEl = document.getElementById("text");
+let txtIndex = 0, charIndex = 0, isDeleting = false;
+
+function tick() {
+  const current = texts[txtIndex];
+  if (!isDeleting) {
+    charIndex++;
+    textEl.textContent = current.slice(0, charIndex);
+    if (charIndex === current.length) { isDeleting = true; setTimeout(tick, 1400); return; }
+  } else {
+    charIndex--;
+    textEl.textContent = current.slice(0, charIndex);
+    if (charIndex === 0) { isDeleting = false; txtIndex = (txtIndex+1) % texts.length; setTimeout(tick, 200); return; }
+  }
+  setTimeout(tick, isDeleting ? 50 : 100);
+}
+tick();
+
+// Reveal on scroll
+const reveals = document.querySelectorAll('.reveal');
+const obs = new IntersectionObserver(entries=>{
+  entries.forEach(en=>{ if(en.isIntersecting) en.target.classList.add('show'); });
+}, {threshold:0.12});
+reveals.forEach(r=>obs.observe(r));
+
 let toggle = document.querySelector('.nav-toggle');
 let icon = document.querySelector('.nav-toggle i');
 let menu = document.querySelector('nav');
@@ -7,63 +33,14 @@ toggle.addEventListener('click', () => {
 
   // Change icon between bars and times
   if (menu.classList.contains('showmenu')) {
-    icon.classList.remove('fa-bars');
-    icon.classList.add('fa-times');
+    icon.classList.remove('ri-menu-3-line');
+    icon.classList.add('ri-close-line');
   } else {
-    icon.classList.remove('fa-times');
-    icon.classList.add('fa-bars');
+    icon.classList.remove('ri-close-line');
+    icon.classList.add('ri-menu-3-line');
   }
 });
-
-
-const texts = [
-      "Graphic Designer",
-      "Frontend Developer",
-      "Web Designer"
-    ];
-    const typingSpeed = 100;
-    const deletingSpeed = 50;
-    const pauseAfterTyped = 1400;
-    const pauseAfterDeleted = 200;
-
-    // --- state ---
-    const textEl = document.getElementById("text");
-    let txtIndex = 0;
-    let charIndex = 0;
-    let isDeleting = false;
-
-    // main loop
-    function tick() {
-      const current = texts[txtIndex];
-      if (!isDeleting) {
-        charIndex++;
-        textEl.textContent = current.slice(0, charIndex);
-
-        if (charIndex === current.length) {
-          isDeleting = true;
-          setTimeout(tick, pauseAfterTyped);
-          return;
-        }
-      } else {
-        charIndex--;
-        textEl.textContent = current.slice(0, charIndex);
-
-        if (charIndex === 0) {
-          isDeleting = false;
-          txtIndex = (txtIndex + 1) % texts.length;
-          setTimeout(tick, pauseAfterDeleted);
-          return;
-        }
-      }
-
-      const delay = isDeleting ? deletingSpeed : typingSpeed;
-      setTimeout(tick, delay);
-    }
-    tick();
-    
-    
-// Smooth scroll for internal links
-    document.querySelectorAll('a[href^="#"]').forEach(a=>{
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
       a.addEventListener('click',function(e){
         const href = this.getAttribute('href');
         if(href.length>1){
@@ -73,22 +50,17 @@ const texts = [
         }
       })
     })
-
-    // Simple reveal on scroll
-    const reveals = document.querySelectorAll('.reveal');
-    const obs = new IntersectionObserver((entries)=>{
-      entries.forEach(en=>{
-        if(en.isIntersecting) en.target.classList.add('show');
-      })
-    },{threshold:0.12});
-    reveals.forEach(r=>obs.observe(r));
     
-  
-  
-    // --- Preloader ---
-window.addEventListener("load", () => {
-  const preloader = document.getElementById("preloader");
-  setTimeout(() => {
-    preloader.classList.add("hide");
-  }, 800); // small delay for a smooth fade-out
+    
+    document.querySelectorAll('nav a').forEach(link => {
+  link.addEventListener('click', () => {
+
+    // Close menu
+    menu.classList.remove('showmenu');
+
+    // Change icon back
+    icon.classList.remove('ri-close-line');
+    icon.classList.add('ri-menu-3-line');
+
+  });
 });
